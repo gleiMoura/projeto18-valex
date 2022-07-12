@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
-import { CreateCardInDatabase, validateApiKey, validateEmployeeAndCard, activate } from "../services/cardService.js";
+import { CreateCardInDatabase, validateApiKey, validateEmployeeAndCard} from "../services/createCardService.js";
+import { activate } from "../services/activateCardService.js";
+import { takeCardInformations } from "../services/informationCardService.js";
 
 
 export async function createCard(req: Request, res: Response) {
@@ -21,4 +23,12 @@ export async function activateCard(req: Request, res: Response) {
     await activate( id, securityCode, password );
 
     res.sendStatus( 200 );
+};
+
+export async function viewCardInformations(req: Request, res: Response) {
+    const { id } = req.body;
+    
+    const data = await takeCardInformations( id );
+
+    res.status(200).send( data );
 }
