@@ -1,39 +1,12 @@
 import bcrypt from "bcrypt";
-import dayjs from "dayjs"
-import { findCardById, update } from "../repositories/cardRepository.js";
+import { findCardById ,update } from "../repositories/cardRepository.js";
+import { verifyCard } from "../utils/cardUtils.js"
 
 //activate card
 export async function activate( id: number, securityCode: string, password: string) {
     const card = await findCardById( id );
-    if( !card ) {
-        throw {
-            response: {
-                message:"Card was not created yet",
-                status: 404
-            }
-        }
-    };
 
-    const experationDate = card.expirationDate;
-    const message = validateExperationDate( experationDate );
-    if(message !== null) {
-        throw {
-            response: {
-                message,
-                status: 422
-            }
-        }
-    };
-
-    console.log(card.password)
-    if( card.isBlocked === false || card.password !== null ) {
-        throw {
-            response: {
-                message: "Card is not valid",
-                status: 422
-            }
-        }
-    };
+    verifyCard( id );
 
     if( card.securityCode !== securityCode ) {
         throw {
@@ -62,20 +35,3 @@ export async function activate( id: number, securityCode: string, password: stri
 
     update( id, cardData );
 };
-
-
-function validateExperationDate( experationDate: string ):string {
-    const month = dayjs().format("MM");
-    const year = dayjs().format("YY");
-
-    const experDate = experationDate.split("/");
-    const experMonth = experDate[0];
-    const experYear = experDate[1];
-    
-    if( experYear === year && experMonth < month ||
-        experYear < year) {
-            return "Card is expired";
-        };
-        
-    return null;
-}
