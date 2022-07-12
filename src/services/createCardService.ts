@@ -1,22 +1,10 @@
 import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
 import Cryptr from "cryptr";
-import { findByApiKey } from "../repositories/companyRepository.js";
 import { findById } from "../repositories/employeeRepository.js";
 import { findByTypeAndEmployeeId, insert} from "../repositories/cardRepository.js";
 
 //create card
-export async function validateApiKey(auth: string) {
-    const token = auth?.replace("Bearer  ", "");
-    const key = await findByApiKey(token);
-    if ( !key ) throw {
-        response: {
-            message: "API KEY doesn't exist in database",
-            status: 404,
-            key
-        }
-    };
-};
 
 export async function validateEmployeeAndCard(employeeId: number, cardType: any) {
     const idFromDB = await findById(employeeId);

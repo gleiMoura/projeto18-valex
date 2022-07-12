@@ -1,14 +1,15 @@
 import { Request, response, Response } from "express";
-import { CreateCardInDatabase, validateApiKey, validateEmployeeAndCard} from "../services/createCardService.js";
+import { CreateCardInDatabase, validateEmployeeAndCard} from "../services/createCardService.js";
 import { activate } from "../services/activateCardService.js";
 import { takeCardInformations } from "../services/informationCardService.js";
 import { blockIt } from "../services/blockCardService.js";
-
+import { unlockIt } from "../services/unlockCardService.js"
+import { validateApiKey } from "../utils/cardUtils.js";
 
 export async function createCard(req: Request, res: Response) {
     const { authorization } = req.headers;
     if( !authorization ) return res.status(422).send("Authorization problem"); 
-    await validateApiKey( authorization ); //business API KEY must be in database
+    await validateApiKey( authorization, "withoutReturn" ); //business API KEY must be in database
 
     const { employeeId, type }:{employeeId: number, type: string} = req.body;
     await validateEmployeeAndCard( employeeId, type );
@@ -37,7 +38,16 @@ export async function viewCardInformations(req: Request, res: Response) {
 export async function blockCard(req: Request, res: Response) {
     const {id , password} = req.body;
 
-    blockIt( id, password );
+    await blockIt( id, password );
 
     res.sendStatus(200);
 };
+
+
+export async function unlockCard (req: Request, res: Response) {
+    const {id , password} = req.body;
+
+    await unlockIt( id, password );
+
+    res.sendStatus(200);
+}

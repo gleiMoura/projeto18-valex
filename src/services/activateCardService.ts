@@ -8,6 +8,15 @@ export async function activate( id: number, securityCode: string, password: stri
 
     verifyCard( id );
 
+    if( card.isBlocked === false || card.password !== null ) {
+        throw {
+            response: {
+                message: "Card is not valid",
+                status: 422
+            }
+        }
+    };
+
     if( card.securityCode !== securityCode ) {
         throw {
             response: {
