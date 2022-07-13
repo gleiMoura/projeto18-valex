@@ -1,12 +1,10 @@
 
-import { findCardById } from "../repositories/cardRepository.js";
 import { insert } from "../repositories/rechargeRepository.js";
 import { verifyCard } from "../utils/cardUtils.js";
 
-export async function doRecharge ( auth: string, cardId:number, amount: number ) {
-    const card = await findCardById( cardId );
+export async function doRecharge ( cardId:number, amount: number ) {
 
-    verifyCard( cardId );
+    const card = await verifyCard( cardId );
 
     if( card.isBlocked === true ) {
         throw {

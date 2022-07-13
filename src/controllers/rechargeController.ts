@@ -8,7 +8,7 @@ export async function rechargeCard(req: Request, res: Response) {
     await validateApiKey( authorization, "withoutReturn" ); //business API KEY must be in database
     const { cardId, amount }: {cardId: number, amount: number} = req.body;
 
-    await doRecharge(authorization, cardId, amount);
+    await doRecharge(cardId, amount);
 
     res.sendStatus(200);
 }

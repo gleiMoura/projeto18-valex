@@ -1,5 +1,5 @@
 import { update } from "../repositories/cardRepository.js";
-import {  verifyToBlockOrUnlock } from "../utils/cardUtils.js"
+import {  verifyCardAndPassword } from "../utils/cardUtils.js"
 
 export async function blockIt( id: number, password: string) {
     if(!id || !password) {
@@ -10,7 +10,7 @@ export async function blockIt( id: number, password: string) {
             }
         }
     }
-    await verifyToBlockOrUnlock( id, password, "block" )
+    await verifyCardAndPassword( id, password, "block" )
 
     update(id, {isBlocked: true})
 }

@@ -20,7 +20,8 @@ export async function validateApiKey(auth: string, withOrWithourReturn: string) 
     }
 };
 
-export async function verifyToBlockOrUnlock( id: number, password: string, wish: string ) {
+//wish is to know if card is block or unblock
+export async function verifyCardAndPassword( id: number, password: string, wish: string ) {
     verifyCard( id );
 
     const card = await findCardById( id );
@@ -30,14 +31,14 @@ export async function verifyToBlockOrUnlock( id: number, password: string, wish:
         if(wish === "block") {
             throw {
                 response: {
-                    message: "Card is aready blocked",
+                    message: "Card is blocked",
                     status: 409
                 }
             }
         }else if (wish === "unlock") {
             throw {
                 response: {
-                    message: "Card is aready unlocked",
+                    message: "Card is unlocked",
                     status: 422
                 }
             }
@@ -46,6 +47,8 @@ export async function verifyToBlockOrUnlock( id: number, password: string, wish:
 
     const cryptPassword = card.password;
     verifyPassword( password, cryptPassword );
+
+    return card
 }
 
 // verify if card exist in database and if it is not expired
@@ -60,8 +63,8 @@ export async function verifyCard( id: number) {
         }
     };
 
-    const experationDate = card.expirationDate;
-    const message = validateExpirationDate( experationDate );
+    const expirationDate = card.expirationDate;
+    const message = validateExpirationDate( expirationDate );
     if(message !== null) {
         throw {
             response: {
@@ -70,14 +73,16 @@ export async function verifyCard( id: number) {
             }
         }
     };
+    
+    return card
 };
 
 //auxiliate function
-function validateExpirationDate( experationDate: string ):string {
+function validateExpirationDate( expirationDate: string ):string {
     const month = dayjs().format("MM");
     const year = dayjs().format("YY");
 
-    const experDate = experationDate.split("/");
+    const experDate = expirationDate.split("/");
     const experMonth = experDate[0];
     const experYear = experDate[1];
     

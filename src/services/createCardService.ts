@@ -17,7 +17,7 @@ export async function validateEmployeeAndCard(employeeId: number, cardType: any)
         }
     };
 
-    const cardTypes: string[] = ['groceries', 'restaurants', 'transport', 'education', 'health'];
+    const cardTypes: string[] = ['groceries', 'restaurant', 'transport', 'education', 'health'];
     //verify if card type is valid
     let type: string = '';
     cardTypes.forEach(element => {
@@ -76,7 +76,16 @@ export async function CreateCardInDatabase(employeeId: number, type: any) {
 
     insert( cardInsertData );
 
-    const { id } : {id:number} = await findByTypeAndEmployeeId(type, employeeId);
+    const { id } = await findByTypeAndEmployeeId(type, employeeId);
+
+    if(!id) {
+        throw {
+            response: {
+                message: "this id is not in database",
+                status: 404
+            }
+        }
+    }
 
     return { id, securityCode }
 };
